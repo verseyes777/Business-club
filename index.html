@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>کلوپ حرفه‌ای‌ها</title>
+<style>
+  :root{
+    --ink:#12181B; --surface:#1B2328; --raised:#232C31; --line:#2E393F;
+    --gold:#D4A24E; --goldSoft:#3A3120; --teal:#5FA8A0; --text:#ECE7DD; --muted:#93A0A3;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{background:var(--ink); color:var(--text); min-height:100vh; font-family:Tahoma,"Segoe UI",sans-serif;}
+  .header{position:sticky; top:0; z-index:10; background:var(--ink); border-bottom:1px solid var(--line); padding:16px 16px 8px;}
+  .header-top{display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;}
+  .header-sub{color:var(--muted); font-size:12px;}
+  .header-title{color:var(--text); font-size:18px; font-weight:700; line-height:1.2;}
+  .header-en{color:var(--muted); font-size:10px; letter-spacing:.5px;}
+  .coin-pill{display:flex; align-items:center; gap:6px; background:var(--goldSoft); border:1px solid #D4A24E55; border-radius:999px; padding:6px 12px;}
+  .coin-pill span{color:var(--gold); font-size:14px; font-weight:600;}
+  .nav{display:flex; gap:4px; overflow-x:auto; padding-bottom:4px;}
+  .nav::-webkit-scrollbar{display:none;}
+  .nav button{display:flex; align-items:center; gap:6px; padding:8px 12px; border-radius:8px; font-size:12px; font-weight:500; white-space:nowrap; border:none; background:transparent; color:var(--muted); cursor:pointer; font-family:inherit;}
+  .nav button.active{background:var(--gold); color:var(--ink);}
+  main{padding:16px; padding-bottom:40px; max-width:560px; margin:0 auto;}
+  .card{background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:16px;}
+  .stat-row{display:flex; gap:12px; flex-wrap:wrap; margin-bottom:20px;}
+  .stat-card{background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:14px; flex:1; min-width:145px;}
+  .stat-label{color:var(--muted); font-size:12px; margin-bottom:10px; display:flex; justify-content:space-between;}
+  .stat-value{color:var(--text); font-size:22px; font-weight:700;}
+  .section-title{color:var(--text); font-weight:600; margin-bottom:10px; display:flex; align-items:center; gap:8px;}
+  .banner{background:var(--goldSoft); border:1px solid #D4A24E55; border-radius:12px; padding:14px; color:var(--gold); font-size:14px; font-weight:600; margin-bottom:20px;}
+  .list-item{background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:12px; display:flex; align-items:center; gap:10px; margin-bottom:8px;}
+  .avatar{width:36px; height:36px; border-radius:999px; display:flex; align-items:center; justify-content:center; font-weight:700; flex-shrink:0;}
+  .grow{flex:1; min-width:0;}
+  .name{font-size:14px; color:var(--text); font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .sub{font-size:11px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .tag{font-size:11px; color:var(--teal); display:flex; align-items:center; gap:4px; flex-shrink:0;}
+  .empty{color:var(--muted); font-size:13px;}
+  table{width:100%; border-collapse:collapse;}
+  th{color:var(--muted); font-size:11px; font-weight:500; text-align:right; padding:8px; border-bottom:1px solid var(--line); white-space:nowrap;}
+  td{color:var(--text); font-size:13px; padding:8px; border-bottom:1px solid var(--line);}
+  tr.row{cursor:pointer;}
+  .detail-row td{background:var(--raised); font-size:12px; color:var(--muted); line-height:1.9;}
+  .toolbar{display:flex; gap:8px; margin-bottom:12px;}
+  .search{flex:1; background:var(--surface); border:1px solid var(--line); border-radius:8px; padding:9px 12px; color:var(--text); font-size:13px; outline:none; font-family:inherit;}
+  .search::placeholder{color:var(--muted);}
+  .btn-gold{background:var(--gold); color:var(--ink); border:none; border-radius:8px; padding:9px 14px; font-size:13px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:4px; font-family:inherit;}
+  .chip-row{display:flex; gap:8px; overflow-x:auto; margin-bottom:14px; padding-bottom:2px;}
+  .chip-row::-webkit-scrollbar{display:none;}
+  .chip{font-size:12px; padding:6px 12px; border-radius:999px; white-space:nowrap; border:1px solid var(--line); background:var(--surface); color:var(--muted); cursor:pointer; font-family:inherit;}
+  .chip.active{background:var(--gold); color:var(--ink); border-color:var(--gold);}
+  .modal-overlay{position:fixed; inset:0; background:#000000aa; z-index:50; display:flex; align-items:flex-end; justify-content:center;}
+  .modal{background:var(--surface); border:1px solid var(--line); border-radius:16px 16px 0 0; padding:20px; width:100%; max-width:420px; max-height:88vh; overflow-y:auto;}
+  .modal-head{display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;}
+  .modal input, .modal select, .modal textarea{width:100%; background:var(--ink); border:1px solid var(--line); color:var(--text); border-radius:8px; padding:9px 12px; font-size:13px; outline:none; font-family:inherit; margin-bottom:10px;}
+  .modal label{color:var(--muted); font-size:11px; display:block; margin-bottom:4px;}
+  .grid2{display:grid; grid-template-columns:1fr 1fr; gap:8px;}
+  .close-x{background:none; border:none; color:var(--muted); cursor:pointer; font-size:18px;}
+  .star-badge{background:var(--goldSoft); border:1px solid #D4A24E55; color:var(--gold); font-size:12px; border-radius:999px; padding:5px 12px; display:inline-flex; align-items:center; gap:5px; margin-bottom:14px;}
+  .adv-toggle{background:none; border:1px dashed var(--line); color:var(--muted); width:100%; text-align:center; padding:9px; border-radius:8px; font-size:12px; cursor:pointer; font-family:inherit; margin:6px 0 14px;}
+  .adv-section{display:none; border-top:1px solid var(--line); padding-top:12px; margin-top:-4px;}
+  .adv-section.open{display:block;}
+  .field-title{color:var(--text); font-size:12px; font-weight:600; margin:14px 0 8px;}
+  .field-title:first-child{margin-top:0;}
+  .gantt-row{margin-bottom:16px;}
+  .gantt-top{display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; gap:8px;}
+  .gantt-task{display:flex; align-items:center; gap:8px; cursor:pointer; background:none; border:none; font-family:inherit; min-width:0;}
+  .gantt-track{background:var(--ink); border-radius:6px; height:24px; position:relative;}
+  .gantt-bar{position:absolute; top:0; height:100%; border-radius:6px; overflow:hidden;}
+  .gantt-fill{height:100%; opacity:.7;}
+  .legend{display:flex; gap:16px; font-size:12px; margin-bottom:14px; color:var(--muted);}
+  .dot{width:8px; height:8px; border-radius:999px; display:inline-block; margin-inline-end:6px; flex-shrink:0;}
+  .stage-head{display:flex; align-items:center; gap:8px; margin:16px 0 8px;}
+  .stage-title{color:var(--text); font-size:14px; font-weight:600;}
+  .bars{height:150px; display:flex; align-items:flex-end; gap:12px; padding-top:10px;}
+  .bar-wrap{flex:1; display:flex; flex-direction:column; align-items:center; gap:6px;}
+  .bar{width:100%; border-radius:6px 6px 0 0; background:var(--gold);}
+  .bar-label{font-size:10px; color:var(--muted); text-align:center;}
+  svg.linechart{width:100%; height:180px;}
+  .funnel-row{display:flex; align-items:center; gap:10px; margin-bottom:10px;}
+  .funnel-label{width:88px; font-size:11px; color:var(--muted); flex-shrink:0; text-align:left;}
+  .funnel-track{flex:1; background:var(--ink); border-radius:6px; height:26px; position:relative; overflow:hidden;}
+  .funnel-fill{height:100%; display:flex; align-items:center; padding-inline-start:8px; color:var(--ink); font-size:11px; font-weight:700; border-radius:6px;}
+  .overdue{color:#C1614C !important;}
+  .login-wrap{min-height:100vh; display:flex; align-items:center; justify-content:center; padding:20px;}
+  .login-card{background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:28px 24px; width:100%; max-width:340px;}
+  .login-title{font-size:20px; font-weight:700; color:var(--text); text-align:center; margin-bottom:2px;}
+  .login-en{font-size:11px; color:var(--muted); text-align:center; margin-bottom:24px;}
+  .login-card input{width:100%; background:var(--ink); border:1px solid var(--line); color:var(--text); border-radius:8px; padding:11px 14px; font-size:14px; outline:none; font-family:inherit; margin-bottom:12px;}
+  .login-card label{color:var(--muted); font-size:12px; display:block; margin-bottom:5px;}
+  .login-error{color:#C1614C; font-size:12px; margin-bottom:10px; display:none;}
+  .login-error.show{display:block;}
+  .logout-btn{background:none; border:1px solid var(--line); color:var(--muted); border-radius:8px; padding:6px 10px; font-size:11px; cursor:pointer; font-family:inherit;}
+  .app-hidden{display:none !important;}
+</style>
+</head>
+<body>
+
+<div class="login-wrap" id="loginScreen">
+  <div class="login-card">
+    <div class="login-title">کلوپ حرفه‌ای‌ها</div>
+    <div class="login-en">Business Club — ورود</div>
+    <div class="login-error" id="loginError">نام کاربری یا رمز عبور اشتباه است</div>
+    <label>نام کاربری</label>
+    <input id="loginUser" placeholder="نام کاربری" autocomplete="username">
+    <label>رمز عبور</label>
+    <input id="loginPass" type="password" placeholder="رمز عبور" autocomplete="current-password">
+    <button class="btn-gold" id="loginBtn" style="width:100%;justify-content:center;margin-top:6px;">ورود</button>
+  </div>
+</div>
+
+<div id="appRoot" class="app-hidden">
+  <div class="header">
+    <div class="header-top">
+      <div>
+        <div class="header-sub" id="pageTitle">امروز</div>
+        <div class="header-title">کلوپ حرفه‌ای‌ها</div>
+        <div class="header-en">Business Club</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div class="coin-pill">🪙 <span id="coinTotal">0</span></div>
+        <button class="logout-btn" id="logoutBtn">خروج</button>
+      </div>
+    </div>
+    <div class="nav" id="nav"></div>
+  </div>
+
+  <main id="main"></main>
+</div>
+
+<script>
+/* ================= date helpers ================= */
+function addDays(base,n){ const d=new Date(base); d.setDate(d.getDate()+n); d.setHours(0,0,0,0); return d; }
+function daysBetween(a,b){ return Math.round((b-a)/86400000); }
+function fmtDate(d){ return d ? d.toLocaleDateString('fa-IR') : ""; }
+function toISO(d){ return d.toISOString().slice(0,10); }
+function parseISO(s){ if(!s) return null; const d=new Date(s+'T00:00:00'); return d; }
+const TODAY = new Date(); TODAY.setHours(0,0,0,0);
+
+/* ================= auth (demo only) =================
+   این یک ورود ساده‌ی سمت-کاربر برای دموی همین نمونه‌ی اولیه است.
+   نام‌کاربری/رمزها همین‌جا توی کد قرار دارند و با "نمایش کد صفحه" قابل دیدنند —
+   یعنی امن نیستند و فقط برای تست داخلی مناسبند.
+   قبل از وصل کردن دامنه‌ی اصلی، این بخش باید با یک ورود واقعی سمت سرور جایگزین شود. */
+const USERS = {
+  "shiva": { password:"1234", name:"شیوا محمدی" },
+  "javad": { password:"1234", name:"جواد رستمی" },
+};
+let CURRENT_USER = null;
+
+function defaultProfessions(){ return ["طراحی گرافیک","فروش","دیجیتال مارکتینگ","تولید محتوا","مشاوره کسب‌وکار"]; }
+function defaultSegments(){ return ["خرده‌فروشی","B2B","فروشگاه آنلاین","خدمات محلی"]; }
+function defaultProjects(){ return ["توسعه شبکه","تولید محتوا","پیگیری فروش"]; }
+
+/* ================= dynamic lists (filled after login) ================= */
+let PROFESSIONS = [];
+let MARKET_SEGMENTS = [];
+let PROJECTS = [];
+let WORKERS = [];
+const STAGES = ["ارتباط اولیه","تماس و گفتگو","پیگیری","پیش‌خرید","خرید","تکرار خرید"];
+const CONTACT_TYPES = ["تماس تلفنی","پیام واتساپ","جلسه حضوری"];
+const PALETTE = ["#C97B84","#D4A24E","#5FA8A0","#8E9BD9","#9BB673","#7FA8C9","#C98A5F","#A87FC9"];
+function colorFor(str){
+  let h=0; for(let i=0;i<str.length;i++) h=str.charCodeAt(i)+((h<<5)-h);
+  return PALETTE[Math.abs(h)%PALETTE.length];
+}
+
+/* ================= per-user seed data ================= */
+let people = [];
+let tasks = [];
+
+function seedPeopleFor(user){
+  if(user==="javad"){
+    return [
+      {id:1,name:"سارا کاظمی",phone:"0935xxxxxxx",instagram:"@sara.k",profession:"طراحی گرافیک",segment:"فروشگاه آنلاین",stage:"ارتباط اولیه",
+       contactDate:addDays(TODAY,-1),contactType:"پیام واتساپ",contactResult:"درخواست نمونه‌کار داد",nextContact:TODAY,
+       coins:5,referredBy:"—", adv:{}},
+      {id:2,name:"حسین رضایی",phone:"0938xxxxxxx",instagram:"@hossein.r",profession:"چاپ و بسته‌بندی",segment:"B2B",stage:"تماس و گفتگو",
+       contactDate:addDays(TODAY,-2),contactType:"تماس تلفنی",contactResult:"قیمت نهایی رو خواست",nextContact:addDays(TODAY,-1),
+       coins:7,referredBy:"—", adv:{}},
+      {id:3,name:"نیلوفر عباسی",phone:"0936xxxxxxx",instagram:"@niloofar.a",profession:"طراحی گرافیک",segment:"خرده‌فروشی",stage:"خرید",
+       contactDate:addDays(TODAY,-6),contactType:"جلسه حضوری",contactResult:"سفارش نهایی رو ثبت کرد",nextContact:addDays(TODAY,5),
+       coins:12,referredBy:"سارا کاظمی", adv:{}},
+    ];
+  }
+  return [
+    {id:1,name:"جواد رستمی",phone:"0913xxxxxxx",instagram:"@javad.design",profession:"طراحی گرافیک",segment:"B2B",stage:"پیگیری",
+     contactDate:addDays(TODAY,-3),contactType:"تماس تلفنی",contactResult:"علاقه‌مند بود، منتظر پیش‌فاکتوره",nextContact:TODAY,
+     coins:9,referredBy:"—", adv:{}},
+    {id:2,name:"نگار احمدی",phone:"0912xxxxxxx",instagram:"@negar.sales",profession:"فروش",segment:"خرده‌فروشی",stage:"خرید",
+     contactDate:addDays(TODAY,-5),contactType:"پیام واتساپ",contactResult:"فاکتور نهایی ارسال شد",nextContact:addDays(TODAY,-2),
+     coins:14,referredBy:"—", adv:{}},
+    {id:3,name:"امیر توکلی",phone:"0917xxxxxxx",instagram:"@amir.content",profession:"تولید محتوا",segment:"فروشگاه آنلاین",stage:"ارتباط اولیه",
+     contactDate:addDays(TODAY,-1),contactType:"جلسه حضوری",contactResult:"جلسه‌ی آشنایی خوبی بود",nextContact:addDays(TODAY,1),
+     coins:6,referredBy:"جواد رستمی", adv:{}},
+    {id:4,name:"مریم صادقی",phone:"0915xxxxxxx",instagram:"@maryam.biz",profession:"مشاوره کسب‌وکار",segment:"B2B",stage:"تماس و گفتگو",
+     contactDate:addDays(TODAY,-4),contactType:"تماس تلفنی",contactResult:"نیاز به زمان بیشتر برای تصمیم‌گیری داشت",nextContact:addDays(TODAY,3),
+     coins:8,referredBy:"نگار احمدی", adv:{}},
+    {id:5,name:"پویا کریمی",phone:"0914xxxxxxx",instagram:"@pouya.k",profession:"فروش",segment:"خدمات محلی",stage:"تکرار خرید",
+     contactDate:addDays(TODAY,-10),contactType:"پیام واتساپ",contactResult:"خرید دوم رو هم انجام داد",nextContact:addDays(TODAY,7),
+     coins:11,referredBy:"—", adv:{}},
+    {id:6,name:"الناز نوری",phone:"0919xxxxxxx",instagram:"@elnaz.designs",profession:"طراحی گرافیک",segment:"فروشگاه آنلاین",stage:"ارتباط اولیه",
+     contactDate:addDays(TODAY,-6),contactType:null,contactResult:"",nextContact:null,
+     coins:4,referredBy:"جواد رستمی", adv:{}},
+    {id:7,name:"بابک یزدانی",phone:"0910xxxxxxx",instagram:"@babak.digital",profession:"دیجیتال مارکتینگ",segment:"B2B",stage:"پیش‌خرید",
+     contactDate:addDays(TODAY,-2),contactType:"تماس تلفنی",contactResult:"درخواست بررسی گزارش کمپین کرد",nextContact:addDays(TODAY,-1),
+     coins:10,referredBy:"مریم صادقی", adv:{}},
+  ];
+}
+
+function seedTasksFor(user){
+  const who = USERS[user] ? USERS[user].name : "من";
+  if(user==="javad"){
+    return [
+      {id:1,title:"تماس با ۳ مشتری قدیمی",who,project:"توسعه شبکه",by:"شخصی",start:addDays(TODAY,-2),due:addDays(TODAY,2),progress:40,coin:0,desc:"",cost:0},
+      {id:2,title:"طراحی نمونه‌کار جدید برای پیج",who,project:"تولید محتوا",by:"مدیریت",start:addDays(TODAY,-1),due:addDays(TODAY,5),progress:20,coin:30,desc:"",cost:0},
+    ];
+  }
+  return [
+    {id:1,title:"تکمیل پروفایل شبکه",who,project:"توسعه شبکه",by:"شخصی",start:addDays(TODAY,-9),due:addDays(TODAY,-6),progress:100,coin:0,desc:"",cost:0},
+    {id:2,title:"افزودن ۵ مخاطب جدید به CRM",who,project:"توسعه شبکه",by:"مدیریت",start:addDays(TODAY,-8),due:addDays(TODAY,-2),progress:80,coin:40,desc:"",cost:0},
+    {id:3,title:"طراحی پست هفتگی برای شبکه",who,project:"تولید محتوا",by:"شخصی",start:addDays(TODAY,-4),due:TODAY,progress:60,coin:0,desc:"",cost:150000},
+    {id:4,title:"پیگیری ۳ فرصت فروش باز",who,project:"پیگیری فروش",by:"مدیریت",start:addDays(TODAY,-1),due:addDays(TODAY,7),progress:35,coin:60,desc:"",cost:0},
+    {id:5,title:"شرکت در وبینار گروهی هفتگی",who,project:"توسعه شبکه",by:"مدیریت",start:addDays(TODAY,4),due:addDays(TODAY,5),progress:0,coin:20,desc:"",cost:0},
+    {id:6,title:"بررسی و به‌روزرسانی کیف فروش",who,project:"پیگیری فروش",by:"شخصی",start:addDays(TODAY,6),due:addDays(TODAY,11),progress:10,coin:0,desc:"",cost:0},
+  ];
+}
+
+/* ================= persistence (per-user, localStorage) ================= */
+function serializePeople(arr){
+  return arr.map(p=>({...p, contactDate:p.contactDate?toISO(p.contactDate):null, nextContact:p.nextContact?toISO(p.nextContact):null}));
+}
+function deserializePeople(arr){
+  return arr.map(p=>({...p, contactDate:p.contactDate?parseISO(p.contactDate):null, nextContact:p.nextContact?parseISO(p.nextContact):null}));
+}
+function serializeTasks(arr){
+  return arr.map(t=>({...t, start:toISO(t.start), due:toISO(t.due)}));
+}
+function deserializeTasks(arr){
+  return arr.map(t=>({...t, start:parseISO(t.start), due:parseISO(t.due)}));
+}
+function storageKey(username){ return "bc_data_"+username; }
+
+function saveUserData(){
+  if(!CURRENT_USER) return;
+  const blob = { people:serializePeople(people), tasks:serializeTasks(tasks), PROFESSIONS, MARKET_SEGMENTS, PROJECTS, WORKERS };
+  localStorage.setItem(storageKey(CURRENT_USER.username), JSON.stringify(blob));
+}
+
+function loadUserData(username){
+  const raw = localStorage.getItem(storageKey(username));
+  if(raw){
+    try{
+      const blob = JSON.parse(raw);
+      people = deserializePeople(blob.people);
+      tasks = deserializeTasks(blob.tasks);
+      PROFESSIONS = (blob.PROFESSIONS && blob.PROFESSIONS.length) ? blob.PROFESSIONS : defaultProfessions();
+      MARKET_SEGMENTS = (blob.MARKET_SEGMENTS && blob.MARKET_SEGMENTS.length) ? blob.MARKET_SEGMENTS : defaultSegments();
+      PROJECTS = (blob.PROJECTS && blob.PROJECTS.length) ? blob.PROJECTS : defaultProjects();
+      WORKERS = (blob.WORKERS && blob.WORKERS.length) ? blob.WORKERS : [USERS[username].name];
+      return;
+    }catch(e){ /* fall through to fresh seed */ }
+  }
+  people = seedPeopleFor(username);
+  tasks = seedTasksFor(username);
+  PROFESSIONS = defaultProfessions();
+  MARKET_SEGMENTS = defaultSegments();
+  PROJECTS = defaultProjects();
+  WORKERS = [USERS[username].name];
+}
+
+/* ================= login / logout / session ================= */
+function doLogin(){
+  const u = document.getElementById("loginUser").value.trim();
+  const p = document.getElementById("loginPass").value;
+  const err = document.getElementById("loginError");
+  if(USERS[u] && USERS[u].password===p){
+    CURRENT_USER = { username:u, name:USERS[u].name };
+    localStorage.setItem("bc_session", u);
+    loadUserData(u);
+    err.classList.remove("show");
+    showApp();
+  } else {
+    err.classList.add("show");
+  }
+}
+function doLogout(){
+  localStorage.removeItem("bc_session");
+  CURRENT_USER = null;
+  document.getElementById("appRoot").classList.add("app-hidden");
+  document.getElementById("loginScreen").classList.remove("app-hidden");
+  document.getElementById("loginUser").value = "";
+  document.getElementById("loginPass").value = "";
+}
+function showApp(){
+  document.getElementById("loginScreen").classList.add("app-hidden");
+  document.getElementById("appRoot").classList.remove("app-hidden");
+  tab = "today"; netQuery = ""; netCat = "همه"; expandedRow = null;
+  render();
+}
+function trySessionRestore(){
+  const saved = localStorage.getItem("bc_session");
+  if(saved && USERS[saved]){
+    CURRENT_USER = { username:saved, name:USERS[saved].name };
+    loadUserData(saved);
+    showApp();
+  }
+}
+
+const EVENTS = [
+  {type:"رویداد گروهی",title:"کارگاه زنده «ساخت پیشنهاد فروش»",date:"پنجشنبه، ۱۳ شهریور، ساعت ۱۸"},
+  {type:"خبر",title:"به‌روزرسانی سیستم سکه: امتیاز معرفی مخاطب دو برابر شد",date:"۲ روز پیش"},
+  {type:"سیستم",title:"قابلیت جدید: فیلتر شبکه بر اساس بخش‌بندی بازار",date:"۵ روز پیش"},
+  {type:"رویداد گروهی",title:"دورهمی ماهانه شبکه — معرفی اعضای تازه",date:"یکشنبه، ۲۳ شهریور"},
+];
+const TYPE_COLOR = {"رویداد گروهی":"#5FA8A0","خبر":"#D4A24E","سیستم":"#93A0A3"};
+
+const MY_GROWTH = [1,2,2,3,4,5,6,7];
+const MY_TOOL_USE = [{tool:"شبکه",pct:24},{tool:"گانت چارت",pct:31},{tool:"آمار",pct:12}];
+
+/* ================= app state ================= */
+let tab = "today";
+let netQuery = "", netCat = "همه", expandedRow = null;
+
+const fa = n => n.toLocaleString("fa-IR");
+
+const NAV = [
+  {id:"today", label:"امروز"},
+  {id:"network", label:"شبکه (CRM)"},
+  {id:"gantt", label:"گانت چارت"},
+  {id:"stats", label:"آمار من"},
+  {id:"programs", label:"برنامه‌ها"},
+];
+const PAGE_TITLE = {today:"امروز", network:"شبکه (CRM)", gantt:"گانت چارت", stats:"آمار من", programs:"برنامه‌ها و اخبار"};
+
+/* ================= render root ================= */
+function renderNav(){
+  const nav = document.getElementById("nav");
+  nav.innerHTML = NAV.map(n => `<button data-tab="${n.id}" class="${tab===n.id?'active':''}">${n.label}</button>`).join("");
+  [...nav.querySelectorAll("button")].forEach(b => b.addEventListener("click", () => { tab = b.dataset.tab; render(); }));
+}
+function coinTotal(){ return people.reduce((s,p)=>s+p.coins,0) + 420; }
+
+function render(){
+  document.getElementById("pageTitle").textContent = PAGE_TITLE[tab];
+  document.getElementById("coinTotal").textContent = fa(coinTotal());
+  renderNav();
+  const main = document.getElementById("main");
+  if(tab==="today") main.innerHTML = todayPage();
+  if(tab==="network") main.innerHTML = networkPage();
+  if(tab==="gantt") main.innerHTML = ganttPage();
+  if(tab==="stats") main.innerHTML = statsPage();
+  if(tab==="programs") main.innerHTML = programsPage();
+  attachHandlers();
+}
+
+/* ================= Today ================= */
+function todayPage(){
+  const contactsDue = people
+    .filter(p => p.nextContact && p.nextContact <= TODAY)
+    .sort((a,b)=> a.nextContact - b.nextContact);
+
+  const tasksSorted = [...tasks].sort((a,b)=>{
+    if((a.progress===100) !== (b.progress===100)) return a.progress===100 ? 1 : -1;
+    return a.due - b.due;
+  });
+
+  return `
+    <div class="banner">امروز ${fa(contactsDue.length)} تماس در انتظار و ${fa(tasks.filter(t=>t.progress<100).length)} کار باز داری</div>
+    <div class="section-title">📞 تماس‌های در انتظار</div>
+    ${contactsDue.length===0 ? `<div class="empty">تماس معوقه‌ای نداری.</div>` :
+      contactsDue.map(p=>{
+        const overdue = daysBetween(p.nextContact, TODAY);
+        return `
+        <div class="list-item">
+          <div class="avatar" style="background:${colorFor(p.profession)}22;color:${colorFor(p.profession)}">${p.name[0]}</div>
+          <div class="grow"><div class="name">${p.name}</div><div class="sub">${p.contactResult || p.stage}</div></div>
+          <div style="text-align:left;flex-shrink:0;">
+            <div class="tag">${p.contactType||""}</div>
+            <div class="sub ${overdue>0?'overdue':''}">${overdue>0? "٪".replace("٪","")+fa(overdue)+" روز تأخیر" : "امروز"}</div>
+          </div>
+        </div>`;
+      }).join("")}
+    <div style="height:20px"></div>
+    <div class="section-title">📋 کارهای گانت (بر اساس اولویت اتمام)</div>
+    ${tasksSorted.map(t=>`
+      <button class="list-item toggle-task" data-id="${t.id}" style="width:100%;text-align:right;cursor:pointer;">
+        <span style="font-size:18px;color:${t.progress===100?'#D4A24E':'#93A0A3'}">${t.progress===100?"●":"○"}</span>
+        <div class="grow">
+          <div class="name" style="${t.progress===100?'text-decoration:line-through;color:#93A0A3':''}">${t.title}</div>
+          <div class="sub">${t.project} · موعد: ${fmtDate(t.due)}</div>
+        </div>
+        ${t.coin>0?`<div class="tag" style="color:#D4A24E">🪙 +${fa(t.coin)}</div>`:""}
+      </button>`).join("")}
+  `;
+}
+
+/* ================= Network / CRM ================= */
+function starEligibleFields(){
+  return ["fName","fPhone","fInsta","fProfession","fSegment","fContactDate","fContactResult","fNextContact",
+          "advProfDetails","advBirthday","advChildren","advHomeAddr","advWorkAddr"];
+}
+function updateStarCount(){
+  const badge = document.getElementById("starCount");
+  if(!badge) return;
+  let n=0;
+  starEligibleFields().forEach(id=>{
+    const el = document.getElementById(id);
+    if(el && el.value && el.value.trim()!=="") n++;
+  });
+  badge.textContent = n;
+}
+
+function networkPage(){
+  const filtered = people.filter(p => (netCat==="همه"||p.profession===netCat) && (p.name.includes(netQuery)||p.instagram.includes(netQuery)));
+  return `
+    <div class="toolbar">
+      <input class="search" id="netSearch" placeholder="جستجوی نام یا آیدی اینستاگرام..." value="${netQuery}">
+      <button class="btn-gold" id="openAdd">+ افزودن</button>
+    </div>
+    <div class="chip-row">
+      ${["همه",...PROFESSIONS].map(c=>`<div class="chip ${netCat===c?'active':''}" data-cat="${c}">${c}</div>`).join("")}
+    </div>
+    <div class="card" style="padding:0;overflow:hidden;">
+      <table>
+        <thead><tr><th>نام</th><th>حرفه</th><th>مرحله</th><th>تماس بعدی</th><th>⭐</th><th></th></tr></thead>
+        <tbody>
+          ${filtered.map(p=>{
+            const overdue = p.nextContact && p.nextContact<TODAY;
+            return `
+            <tr class="row" data-id="${p.id}">
+              <td>${p.name}</td>
+              <td><span class="dot" style="background:${colorFor(p.profession)}"></span><span style="color:#93A0A3;font-size:12px">${p.profession}</span></td>
+              <td><span style="color:#93A0A3;font-size:12px">${p.stage}</span></td>
+              <td><span class="${overdue?'overdue':''}" style="color:${p.nextContact && p.nextContact<=TODAY && !overdue?'#D4A24E':(overdue?'':'#93A0A3')};font-size:12px">${p.nextContact?fmtDate(p.nextContact):"تعیین نشده"}</span></td>
+              <td><span style="color:#D4A24E;font-size:12px">⭐ ${fa(p.coins)}</span></td>
+              <td style="color:#93A0A3">${expandedRow===p.id?"▲":"▼"}</td>
+            </tr>
+            ${expandedRow===p.id?`
+            <tr class="detail-row"><td colspan="6">
+              اینستاگرام: ${p.instagram||"—"}<br>
+              تلفن: ${p.phone||"—"}<br>
+              بخش‌بندی بازار: ${p.segment||"—"}<br>
+              آخرین ارتباط: ${fmtDate(p.contactDate)} · ${p.contactType||"—"}${p.contactResult?` — ${p.contactResult}`:""}<br>
+              معرفی‌شده توسط: ${p.referredBy}
+              ${Object.keys(p.adv||{}).length ? "<br>"+Object.entries(p.adv).filter(([k,v])=>v).map(([k,v])=>`${k}: ${v}`).join("<br>") : ""}
+            </td></tr>`:""}
+          `;}).join("")}
+        </tbody>
+      </table>
+      ${filtered.length===0?`<div class="empty" style="text-align:center;padding:24px;">نتیجه‌ای پیدا نشد</div>`:""}
+    </div>
+    <div id="modalHost"></div>
+  `;
+}
+
+function addContactModal(){
+  return `
+  <div class="modal-overlay" id="overlay">
+    <div class="modal" id="modalBox">
+      <div class="modal-head"><span style="font-weight:600">افزودن مخاطب</span><button class="close-x" id="closeModal">✕</button></div>
+      <div class="star-badge">⭐ فیلدهای پرشده: <span id="starCount">0</span> — هر فیلد یک ستاره (سکه) به این مخاطب می‌دهد</div>
+
+      <label>نام *</label><input id="fName" placeholder="نام">
+      <label>شماره تماس</label><input id="fPhone" placeholder="شماره تماس">
+      <label>آیدی اینستاگرام</label><input id="fInsta" placeholder="@username">
+      <label>حرفه</label><input id="fProfession" list="professionList" placeholder="انتخاب یا نوشتن حرفه‌ی جدید">
+      <datalist id="professionList">${PROFESSIONS.map(p=>`<option value="${p}">`).join("")}</datalist>
+      <label>بخش‌بندی بازار</label><input id="fSegment" list="segmentList" placeholder="انتخاب یا نوشتن بخش جدید">
+      <datalist id="segmentList">${MARKET_SEGMENTS.map(p=>`<option value="${p}">`).join("")}</datalist>
+      <label>مرحله بازاریابی</label>
+      <select id="fStage">${STAGES.map(s=>`<option value="${s}">${s}</option>`).join("")}</select>
+
+      <div class="grid2">
+        <div><label>تاریخ ارتباط</label><input type="date" id="fContactDate" value="${toISO(TODAY)}"></div>
+        <div><label>نوع ارتباط</label><select id="fContactType">${CONTACT_TYPES.map(t=>`<option value="${t}">${t}</option>`).join("")}</select></div>
+      </div>
+      <label>نتیجه ارتباط</label><textarea id="fContactResult" rows="2" placeholder="خلاصه‌ی گفتگو یا نتیجه"></textarea>
+      <label>تاریخ ارتباط بعدی</label><input type="date" id="fNextContact">
+
+      <button type="button" class="adv-toggle" id="advToggle">نمایش اطلاعات بیشتر (اختیاری) ▾</button>
+      <div class="adv-section" id="advSection">
+        <label>مشخصات حرفه</label><textarea id="advProfDetails" rows="2" placeholder="توضیح کوتاه درباره‌ی کارش"></textarea>
+        <div class="grid2">
+          <div><label>تاریخ تولد</label><input type="date" id="advBirthday"></div>
+          <div><label>وضعیت تاهل</label><select id="advMarital"><option value="مجرد">مجرد</option><option value="متاهل">متاهل</option></select></div>
+        </div>
+        <div class="grid2">
+          <div><label>تعداد فرزند</label><input type="number" id="advChildren" min="0"></div>
+          <div><label>جنسیت</label><select id="advGender"><option value="مرد">مرد</option><option value="زن">زن</option></select></div>
+        </div>
+        <div class="grid2">
+          <div><label>سطح مالی</label><select id="advFinance"><option value="1">۱</option><option value="2">۲</option><option value="3">۳</option></select></div>
+          <div><label>تحصیلات</label><select id="advEducation"><option value="دیپلم">دیپلم</option><option value="کاردانی">کاردانی</option><option value="کارشناسی">کارشناسی</option><option value="کارشناسی ارشد">کارشناسی ارشد</option><option value="دکتری">دکتری</option></select></div>
+        </div>
+        <label>آدرس محل زندگی</label><input id="advHomeAddr" placeholder="آدرس محل زندگی">
+        <label>آدرس محل کار</label><input id="advWorkAddr" placeholder="آدرس محل کار">
+      </div>
+
+      <button class="btn-gold" style="width:100%;justify-content:center;margin-top:6px;" id="submitAdd">افزودن به شبکه</button>
+    </div>
+  </div>`;
+}
+
+/* ================= Gantt ================= */
+function ganttRange(){
+  const allDates = tasks.flatMap(t=>[t.start,t.due]);
+  let min = new Date(Math.min(...allDates.map(d=>d.getTime())));
+  let max = new Date(Math.max(...allDates.map(d=>d.getTime())));
+  min = addDays(min,-1); max = addDays(max,1);
+  return {min, span: Math.max(daysBetween(min,max),1)};
+}
+
+function ganttPage(){
+  const {min, span} = ganttRange();
+  return `
+    <div class="legend">
+      <span><span class="dot" style="background:#93A0A3"></span>کار شخصی</span>
+      <span><span class="dot" style="background:#D4A24E"></span>تعریف‌شده توسط مدیریت · سکه‌دار</span>
+    </div>
+    <button class="btn-gold" id="openAddTask" style="margin-bottom:14px;">+ کار جدید</button>
+    <div class="card" style="overflow-x:auto;">
+      <div style="min-width:420px;">
+        ${tasks.map(t=>{
+          const color = t.by==="مدیریت"?"#D4A24E":"#93A0A3";
+          const offset = daysBetween(min, t.start);
+          const dur = Math.max(daysBetween(t.start,t.due),1);
+          return `
+          <div class="gantt-row">
+            <div class="gantt-top">
+              <button class="gantt-task toggle-task" data-id="${t.id}">
+                <span style="color:${t.progress===100?'#D4A24E':'#93A0A3'}">${t.progress===100?"●":"○"}</span>
+                <span style="color:${t.progress===100?'#93A0A3':'#ECE7DD'};${t.progress===100?'text-decoration:line-through':''};font-size:13px">${t.title}</span>
+              </button>
+              ${t.coin>0?`<span style="color:#D4A24E;font-size:12px;flex-shrink:0">🪙 +${fa(t.coin)}</span>`:""}
+            </div>
+            <div class="gantt-track">
+              <div class="gantt-bar" style="right:${(offset/span)*100}%;width:${(dur/span)*100}%;background:${color}33;border:1px solid ${color}">
+                <div class="gantt-fill" style="width:${t.progress}%;background:${color}"></div>
+              </div>
+            </div>
+            <div style="color:#93A0A3;font-size:11px;margin-top:4px;">${t.project} · موعد ${fmtDate(t.due)} · ٪${fa(t.progress)} پیشرفت${t.cost>0?` · هزینه ${fa(t.cost)} تومان`:""}</div>
+          </div>`;
+        }).join("")}
+      </div>
+    </div>
+    <div id="modalHost"></div>
+  `;
+}
+
+function addTaskModal(){
+  return `
+  <div class="modal-overlay" id="overlay">
+    <div class="modal" id="modalBox">
+      <div class="modal-head"><span style="font-weight:600">کار جدید در گانت چارت</span><button class="close-x" id="closeModal">✕</button></div>
+      <label>چه کسی</label><input id="tWho" list="workerList" value="${CURRENT_USER.name}" placeholder="نام فرد">
+      <datalist id="workerList">${WORKERS.map(w=>`<option value="${w}">`).join("")}</datalist>
+      <label>چه کاری</label><input id="tTitle" placeholder="عنوان کار">
+      <label>مربوط به چه پروژه‌ای</label><input id="tProject" list="projectList" placeholder="انتخاب یا نوشتن پروژه‌ی جدید">
+      <datalist id="projectList">${PROJECTS.map(p=>`<option value="${p}">`).join("")}</datalist>
+      <label>انجام تا تاریخ</label><input type="date" id="tDue" value="${toISO(addDays(TODAY,7))}">
+      <label>توضیحات</label><textarea id="tDesc" rows="2" placeholder="توضیحات (اختیاری)"></textarea>
+      <label>هزینه (تومان)</label><input type="number" id="tCost" min="0" placeholder="۰">
+      <button class="btn-gold" style="width:100%;justify-content:center;margin-top:6px;" id="submitTask">افزودن به گانت چارت</button>
+    </div>
+  </div>`;
+}
+
+/* ================= Stats (with funnel) ================= */
+function statsPage(){
+  const ganttDone = Math.round(tasks.reduce((s,t)=>s+t.progress,0)/tasks.length);
+  const maxG = Math.max(...MY_GROWTH);
+  const w=300,h=160,pad=20;
+  const pts = MY_GROWTH.map((v,i)=>{
+    const x = pad + (i*(w-2*pad)/(MY_GROWTH.length-1));
+    const y = h-pad - (v/maxG)*(h-2*pad);
+    return [x,y];
+  });
+  const path = pts.map((p,i)=> (i===0?"M":"L")+p[0]+","+p[1]).join(" ");
+  const dots = pts.map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="3" fill="#D4A24E"/>`).join("");
+  const maxTool = Math.max(...MY_TOOL_USE.map(t=>t.pct));
+
+  const stageCounts = STAGES.map(s=> ({stage:s, count: people.filter(p=>p.stage===s).length}));
+  const maxStage = Math.max(...stageCounts.map(s=>s.count),1);
+
+  return `
+    <div class="stat-row">
+      <div class="stat-card"><div class="stat-label"><span>مخاطبین شبکه من</span>👥</div><div class="stat-value">${fa(people.length)}</div></div>
+      <div class="stat-card"><div class="stat-label"><span>سکه‌های من</span>🪙</div><div class="stat-value">${fa(coinTotal())}</div></div>
+      <div class="stat-card"><div class="stat-label"><span>پیگیری معوقه</span>📞</div><div class="stat-value">${fa(people.filter(p=>p.nextContact && p.nextContact<=TODAY).length)}</div></div>
+      <div class="stat-card"><div class="stat-label"><span>پیشرفت گانت چارت من</span>📋</div><div class="stat-value">٪${fa(ganttDone)}</div></div>
+    </div>
+
+    <div class="card" style="margin-bottom:16px;">
+      <div class="section-title">قیف فروش (بر اساس مرحله بازاریابی)</div>
+      <div style="color:#93A0A3;font-size:12px;margin-bottom:14px;">تعداد مخاطبین شبکه‌ی من در هر مرحله</div>
+      ${stageCounts.map(s=>`
+        <div class="funnel-row">
+          <div class="funnel-label">${s.stage}</div>
+          <div class="funnel-track">
+            <div class="funnel-fill" style="width:${Math.max((s.count/maxStage)*100,s.count>0?14:0)}%;background:#D4A24E">${s.count>0?fa(s.count):""}</div>
+          </div>
+        </div>`).join("")}
+    </div>
+
+    <div class="card" style="margin-bottom:16px;">
+      <div class="section-title">روند رشد شبکه‌ی من</div>
+      <div style="color:#93A0A3;font-size:12px;margin-bottom:10px;">تعداد مخاطبینی که در ۸ هفته‌ی گذشته اضافه کرده‌ام</div>
+      <svg class="linechart" viewBox="0 0 300 160">
+        <path d="${path}" fill="none" stroke="#D4A24E" stroke-width="2.5"/>
+        ${dots}
+      </svg>
+    </div>
+
+    <div class="card">
+      <div class="section-title">استفاده من از ابزارها</div>
+      <div style="color:#93A0A3;font-size:12px;margin-bottom:10px;">درصد رشد استفاده در ماه جاری</div>
+      <div class="bars">
+        ${MY_TOOL_USE.map(t=>`
+          <div class="bar-wrap">
+            <div class="bar" style="height:${(t.pct/maxTool)*100}%;background:#5FA8A0"></div>
+            <div class="bar-label">${t.tool}<br>٪${fa(t.pct)}</div>
+          </div>`).join("")}
+      </div>
+    </div>
+  `;
+}
+
+/* ================= Programs ================= */
+function programsPage(){
+  return EVENTS.map(e=>`
+    <div class="list-item">
+      <div class="avatar" style="background:${TYPE_COLOR[e.type]}22;color:${TYPE_COLOR[e.type]}">${e.type==="رویداد گروهی"?"✨":e.type==="خبر"?"🔔":"ℹ️"}</div>
+      <div class="grow"><div class="sub" style="color:${TYPE_COLOR[e.type]}">${e.type}</div><div class="name">${e.title}</div></div>
+      <div class="sub">${e.date}</div>
+    </div>`).join("");
+}
+
+/* ================= handlers ================= */
+function attachHandlers(){
+  document.querySelectorAll(".toggle-task").forEach(el=>{
+    el.addEventListener("click", ()=>{
+      const id = Number(el.dataset.id);
+      tasks = tasks.map(t=> t.id===id ? {...t, progress: t.progress===100?60:100} : t);
+      saveUserData();
+      render();
+    });
+  });
+
+  if(tab==="network"){
+    document.getElementById("netSearch").addEventListener("input", e=>{
+      netQuery = e.target.value; render();
+      const el=document.getElementById("netSearch"); el.focus(); el.selectionStart=el.selectionEnd=el.value.length;
+    });
+    document.querySelectorAll("[data-cat]").forEach(el=> el.addEventListener("click", ()=>{ netCat = el.dataset.cat; render(); }));
+    document.querySelectorAll("tr.row").forEach(el=> el.addEventListener("click", ()=>{
+      const id = Number(el.dataset.id);
+      expandedRow = expandedRow===id ? null : id;
+      render();
+    }));
+    document.getElementById("openAdd").addEventListener("click", ()=>{
+      document.getElementById("modalHost").innerHTML = addContactModal();
+      document.getElementById("overlay").addEventListener("click", (e)=>{ if(e.target.id==="overlay") document.getElementById("modalHost").innerHTML=""; });
+      document.getElementById("closeModal").addEventListener("click", ()=> document.getElementById("modalHost").innerHTML="");
+      document.getElementById("advToggle").addEventListener("click", ()=>{
+        const sec = document.getElementById("advSection");
+        sec.classList.toggle("open");
+        document.getElementById("advToggle").textContent = sec.classList.contains("open") ? "نمایش اطلاعات بیشتر (اختیاری) ▴" : "نمایش اطلاعات بیشتر (اختیاری) ▾";
+      });
+      starEligibleFields().forEach(id=>{
+        const el = document.getElementById(id);
+        if(el) el.addEventListener("input", updateStarCount);
+      });
+      updateStarCount();
+      document.getElementById("submitAdd").addEventListener("click", ()=>{
+        const name = document.getElementById("fName").value.trim();
+        if(!name) return;
+        const profession = document.getElementById("fProfession").value.trim() || "سایر";
+        const segment = document.getElementById("fSegment").value.trim();
+        if(profession && !PROFESSIONS.includes(profession)) PROFESSIONS.push(profession);
+        if(segment && !MARKET_SEGMENTS.includes(segment)) MARKET_SEGMENTS.push(segment);
+        let stars = 0;
+        starEligibleFields().forEach(id=>{ const el=document.getElementById(id); if(el && el.value.trim()!=="") stars++; });
+        people.push({
+          id: Date.now(), name, phone: document.getElementById("fPhone").value.trim(),
+          instagram: document.getElementById("fInsta").value.trim(),
+          profession, segment, stage: document.getElementById("fStage").value,
+          contactDate: parseISO(document.getElementById("fContactDate").value) || TODAY,
+          contactType: document.getElementById("fContactType").value,
+          contactResult: document.getElementById("fContactResult").value.trim(),
+          nextContact: parseISO(document.getElementById("fNextContact").value),
+          coins: stars, referredBy:"—",
+          adv: {
+            "مشخصات حرفه": document.getElementById("advProfDetails").value.trim(),
+            "تاریخ تولد": document.getElementById("advBirthday").value ? fmtDate(parseISO(document.getElementById("advBirthday").value)) : "",
+            "وضعیت تاهل": document.getElementById("advMarital").value,
+            "تعداد فرزند": document.getElementById("advChildren").value,
+            "جنسیت": document.getElementById("advGender").value,
+            "سطح مالی": document.getElementById("advFinance").value,
+            "تحصیلات": document.getElementById("advEducation").value,
+            "آدرس محل زندگی": document.getElementById("advHomeAddr").value.trim(),
+            "آدرس محل کار": document.getElementById("advWorkAddr").value.trim(),
+          }
+        });
+        saveUserData();
+        document.getElementById("modalHost").innerHTML="";
+        render();
+      });
+    });
+  }
+
+  if(tab==="gantt"){
+    document.getElementById("openAddTask").addEventListener("click", ()=>{
+      document.getElementById("modalHost").innerHTML = addTaskModal();
+      document.getElementById("overlay").addEventListener("click", (e)=>{ if(e.target.id==="overlay") document.getElementById("modalHost").innerHTML=""; });
+      document.getElementById("closeModal").addEventListener("click", ()=> document.getElementById("modalHost").innerHTML="");
+      document.getElementById("submitTask").addEventListener("click", ()=>{
+        const title = document.getElementById("tTitle").value.trim();
+        if(!title) return;
+        const who = document.getElementById("tWho").value.trim() || CURRENT_USER.name;
+        const project = document.getElementById("tProject").value.trim() || "بدون پروژه";
+        if(who && !WORKERS.includes(who)) WORKERS.push(who);
+        if(project && !PROJECTS.includes(project)) PROJECTS.push(project);
+        const due = parseISO(document.getElementById("tDue").value) || addDays(TODAY,7);
+        tasks.push({
+          id: Date.now(), title, who, project, by:"شخصی",
+          start: TODAY, due, progress:0, coin:0,
+          desc: document.getElementById("tDesc").value.trim(),
+          cost: Number(document.getElementById("tCost").value)||0
+        });
+        saveUserData();
+        document.getElementById("modalHost").innerHTML="";
+        render();
+      });
+    });
+  }
+}
+
+document.getElementById("loginBtn").addEventListener("click", doLogin);
+document.getElementById("loginPass").addEventListener("keydown", e=>{ if(e.key==="Enter") doLogin(); });
+document.getElementById("loginUser").addEventListener("keydown", e=>{ if(e.key==="Enter") document.getElementById("loginPass").focus(); });
+document.getElementById("logoutBtn").addEventListener("click", doLogout);
+trySessionRestore();
+</script>
+</body>
+</html>
